@@ -1,0 +1,14 @@
+{
+  "name": "eywa_rpm_silvio_putak",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "Silvio Putak",
+  "license": "ISC",
+  "dependencies": {
+    "selenium-webdriver": "^4.8.1"
+  }
+}
