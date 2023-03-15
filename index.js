@@ -2,19 +2,47 @@ const webdriver = require('selenium-webdriver')
 const By = webdriver.By
 const until = webdriver.until
 const key = webdriver.Key
-const companies = require('./input.json')
+const json = require('./input.json')
 
 const driver = new webdriver.Builder().forBrowser('chrome').build();
 driver.manage().window().maximize()
 
 const logs = []
-const elements = {
+/* const elements = {
     login: {
         username_path: 'session_key',
         password_path: 'session_password',
         submit_path:   '[data-id="sign-in-form__submit-btn"]'
+    },
+    profile: {
+        profile_path: '//*[@id="global-nav"]/div/nav/ul/li[6]',
+        view_profile_path: '//*[text()="View Profile"]',
+        add_experience_path: '//li-icon[@aria-label="Add new experience"]',
+        add_position_path: '//a[@data-field="experience_add_position"]',
+        position_path: '//*[@placeholder="Ex: Retail Sales Manager"]',
+        company_path: '//*[@placeholder="Ex: Microsoft"]',
+        month_path: '//select[@name="month"]',
+        year_path: '//select[@name="year"]',
+        industry_path: '//*[@placeholder="Ex: Retail"]',
+        save_path: '//*[text()="Save"]',
+    },
+    jobs: {
+        jobs_path: '//*[@id="global-nav"]/div/nav/ul/li[3]',
+        input_jobs_path: "//input[@aria-label='Search by title, skill, or company']",
+        input_location_path: "//input[@aria-label='City, state, or zip code']",
+        list_jobs_path : "scaffold-layout__list-container",
+        alert_path: "//span[text()='Set alert']"
+
+    },
+    messages: {
+        messages_path: '//*[@id="global-nav"]/div/nav/ul/li[4]',
+        compose_path: '//*[@aria-label="Compose a new message"]',
+        contanct_path: '//*[@placeholder="Type a name or multiple names"]',
+        text_path: '//*[@aria-label="Write a message…"]',
+        send_path: '//button[text()="Send"]'
     }
-}
+
+} */
 
 const writeLog = (message) => {
     logs.push(message)
@@ -38,13 +66,13 @@ function createJsonFile(name,value){
 
 async function login() {
     // element paths 
-    const {username_path, password_path, submit_path} = elements.login
+    const {username_path, password_path, submit_path} = json.paths.login
     //credentials
-    const {username, password} = companies
+    const {url,username, password} = json.credentials
 
     try{
-        writeLog("Trying to login in Linkedin")
-        await driver.get(companies.url)
+        writeLog("Login in Linkedin profile")
+        await driver.get(url)
         writeLog("Getting url..")
         const usernameInput = await driver.wait(until.elementLocated(By.id(username_path)), 5000)
         await usernameInput.sendKeys(username)
@@ -57,69 +85,79 @@ async function login() {
 
         writeLog("Login successful")
     }catch(err){
-        writeLog("Login failed" + err.message)
+        writeLog("Login in Linkedin failed" + err.message)
     }
 }
 
 async function profile(){
+    // element paths 
+    const {
+        profile_path,
+        view_profile_path,
+        add_experience_path,
+        add_position_path,
+        position_path,
+        company_path,
+        month_path,
+        year_path,
+        industry_path,
+        save_path
+    } = json.paths.profile
+
     try{
-        writeLog("Trying to edit profile")
-        await driver.wait(until.elementLocated(By.xpath('//*[@id="global-nav"]/div/nav/ul/li[6]')), 5000).click();
-        // await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath("//*[text()='View Profile']")), 5000).click();
-        // await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath("//li-icon[@aria-label='Add new experience']")), 5000).click();
-        // await driver.sleep(5000)
-        await driver.findElement(By.xpath("//a[@data-field='experience_add_position']")).click()
-        // await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath("//*[@placeholder='Ex: Retail Sales Manager']")), 5000).sendKeys("Junior software engineer")
-        // await driver.sleep(5000)
-        await driver.findElement(By.xpath("//*[@placeholder='Ex: Microsoft']")).sendKeys("Neyho Informatika d.o.o")
-        // await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath("//select[@name='month']"))).sendKeys("May")
-        // await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath("//select[@name='year']")), 5000).sendKeys("2022")
-        // await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath("//*[@placeholder='Ex: Retail']")), 5000).clear()
-        // await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath("//*[@placeholder='Ex: Retail']")), 5000).sendKeys("Internet")
+        writeLog("Edit profile page")
+        await driver.wait(until.elementLocated(By.xpath(profile_path)), 5000).click();
+        await driver.wait(until.elementLocated(By.xpath(view_profile_path)), 5000).click();
+        await driver.wait(until.elementLocated(By.xpath(add_experience_path)), 5000).click();
+        await driver.wait(until.elementLocated(By.xpath(add_position_path)), 5000).click();
+        /* await driver.findElement(By.xpath(add_position_path)).click() */
+        await driver.wait(until.elementLocated(By.xpath(position_path)), 5000).sendKeys("Junior software engineer")
+        await driver.findElement(By.xpath(company_path)).sendKeys("Neyho Informatika d.o.o")
+        await driver.wait(until.elementLocated(By.xpath(month_path))).sendKeys("May")
+        await driver.wait(until.elementLocated(By.xpath(year_path)), 5000).sendKeys("2022")
+        await driver.wait(until.elementLocated(By.xpath(industry_path)), 5000).clear()
+        await driver.wait(until.elementLocated(By.xpath(industry_path)), 5000).sendKeys("Internet")
         await driver.sleep(2000)
-        await driver.wait(until.elementLocated(By.xpath("//*[@placeholder='Ex: Retail']")), 5000).sendKeys(key.DOWN)
-        // await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath("//*[@placeholder='Ex: Retail']")), 5000).sendKeys(key.ENTER)
-        // await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath("//*[text()='Save']")), 5000).click()
-        // await driver.sleep(5000)
-        //Skip button
-        const skip = await driver.wait(until.elementLocated(By.xpath("//*[text()='Skip']")), 5000)
-        skip ? await skip.click() : null
-        await driver.sleep(5000)
+        await driver.wait(until.elementLocated(By.xpath(industry_path)), 5000).sendKeys(key.DOWN)
+        await driver.wait(until.elementLocated(By.xpath(industry_path)), 5000).sendKeys(key.ENTER)
+        await driver.wait(until.elementLocated(By.xpath(save_path)), 5000).click()
+        //Skip button after creating profile
+        try{
+            const skip = await driver.wait(until.elementLocated(By.xpath("//*[text()='Skip']")), 5000)
+            skip ? await skip.click() : null
+        }catch(err){
+            writeLog("Skip button not found")
+        }
+        
         writeLog("Profile edited successfully")
     }catch(err){
-        writeLog("Profile failed" + err.message)
+        writeLog("Profile edit failed - " + err.message)
     }
 }
 
 async function jobs(){
+    const {
+        jobs_path,
+        input_jobs_path,
+        input_location_path,
+        list_jobs_path,
+        alert_path
+    } = json.paths.jobs
     try{
-        writeLog("Trying to edit jobs")
-        
-
-        await driver.wait(until.elementLocated(By.xpath('//*[@id="global-nav"]/div/nav/ul/li[3]')), 5000).click();
+        writeLog("Edit jobs page");
+        await driver.wait(until.elementLocated(By.xpath(jobs_path)), 5000).click();
+        await driver.sleep(2000)
+        await driver.wait(until.elementLocated(By.xpath(input_jobs_path)), 5000).sendKeys("Junior software intern");
+        await driver.sleep(2000)
+        await driver.wait(until.elementLocated(By.xpath(input_location_path)), 5000).sendKeys("Croatia",key.RETURN);
         await driver.sleep(5000)
-        /* await driver.wait(until.elementLocated(By.xpath('//*[starts-with(@id="jobs-search-box-keyword-id")]')), 5000).sendKeys("Junior software developer") */
-        await driver.wait(until.elementLocated(By.xpath("//input[@aria-label='Search by title, skill, or company']")), 5000).sendKeys("Junior software intern");
-        await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath("//input[@aria-label='City, state, or zip code']")), 5000).sendKeys("Croatia",key.RETURN);
-        await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath("//span[text()='Set alert']")), 5000).click();
-        await driver.sleep(5000)
-        const jobsElement = await driver.wait(until.elementLocated(By.className("scaffold-layout__list-container")), 5000).getText();
+        const jobsElement = await driver.wait(until.elementLocated(By.className(list_jobs_path)), 5000).getText();
+        debugger;
         if(jobsElement){
             const jobs = [];
             const jobList = jobsElement.split('\n');
-        
-            for(let i = 0; i < jobList.length; i += 3) {
+            
+            for(let i = 0; i < jobList.length; i += 5) {
                 const job = {
                     job: jobList[i],
                     company: jobList[i+1],
@@ -128,36 +166,51 @@ async function jobs(){
             
                 jobs.push(job);
             }
-            createJsonFile("./jobs.json", jobs);
+            createJsonFile("./logs/jobs.json", jobs);
         }
         else{
             writeLog("Failed to create json file with lists of jobs.")
         }
+        try{
+            await driver.wait(until.elementLocated(By.xpath(alert_path)), 5000).click()
+        }catch(err){
+            writeLog("Alert button is already activated")
+        }
         
     }catch (err){
-        writeLog("Failed to get jobs" + err.message)
+        writeLog("Failed to get jobs - " + err.message)
     }
     
 }
 
 async function messages() {
+    const {
+        messages_path,
+        compose_path,
+        contanct_path,
+        text_path,
+        send_path
+    } = json.paths.messages
     try {
         writeLog("Compose and send message")
-        await driver.wait(until.elementLocated(By.xpath('//*[@id="global-nav"]/div/nav/ul/li[4]')), 5000).click();
-        await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath('//*[@aria-label="Compose a new message"]')), 5000).click();
-        await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath('//*[@placeholder="Type a name or multiple names"]')), 5000).sendKeys("Ivan Geng");
-        await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath('//*[@placeholder="Type a name or multiple names"]')), 5000).sendKeys(key.ENTER);
-        await driver.sleep(5000)
-        await driver.wait(until.elementLocated(By.xpath('//*[@aria-label="Write a message…"]')), 5000).sendKeys("“Hi,My name is Robert Robotić and this is test message.”1");
-        await driver.sleep(5000)
-        /* await driver.wait(until.elementLocated(By.xpath('//button[text()="Send"]')), 2000).click(); */
-        await driver.sleep(5000)
+        await driver.wait(until.elementLocated(By.xpath(messages_path)), 5000).click();
+        await driver.sleep(2000)
+        await driver.wait(until.elementLocated(By.xpath(compose_path)), 5000).click();
+        await driver.sleep(2000)
+        await driver.wait(until.elementLocated(By.xpath(contanct_path)), 5000).sendKeys("Ivan Geng");
+        await driver.sleep(2000)
+        await driver.wait(until.elementLocated(By.xpath(contanct_path)), 5000).sendKeys(key.ENTER);
+        await driver.sleep(2000)
+        await driver.wait(until.elementLocated(By.xpath(text_path)), 5000).sendKeys("“Hi,My name is Robert Robotić and this is test message.”1");
+        await driver.sleep(2000)
+        try{
+            await driver.wait(until.elementLocated(By.xpath(send_path)), 2000).click();
+        }catch(err){
+            writeLog("Send button not found..")
+        }
         writeLog("Message sent successfully")
     } catch (err) {
-        writeLog("Messaging failed" + err.message)
+        writeLog("Messaging failed - " + err.message)
     }
 }
 
@@ -165,13 +218,13 @@ async function main(){
     try {
         debugger;
         await login()
-        await profile()
+        /* await profile() */
         await jobs()
-        await messages()
+       /*  await messages() */
     } catch (error) {
         writeLog("Error: " + error.message)
     }finally{
-        createJsonFile("./log.json", {logs : logs})
+        createJsonFile("./logs/log.json", {logs : logs})
         await driver.quit()
     }
 }

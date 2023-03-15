@@ -1,0 +1,44 @@
+
+    {
+        "credentials": {
+            "url":"https://www.linkedin.com/",
+            "username":"",
+            "password":""
+        },
+        "paths" : 
+        {
+            "login": {
+              "username_path": "session_key",
+              "password_path": "session_password",
+              "submit_path": "[data-id=\"sign-in-form__submit-btn\"]"
+            },
+            "profile": {
+              "profile_path": "//*[@id=\"global-nav\"]/div/nav/ul/li[6]",
+              "view_profile_path": "//*[text()=\"View Profile\"]",
+              "add_experience_path": "//li-icon[@aria-label=\"Add new experience\"]",
+              "add_position_path": "//a[@data-field=\"experience_add_position\"]",
+              "position_path": "//*[@placeholder=\"Ex: Retail Sales Manager\"]",
+              "company_path": "//*[@placeholder=\"Ex: Microsoft\"]",
+              "month_path": "//select[@name=\"month\"]",
+              "year_path": "//select[@name=\"year\"]",
+              "industry_path": "//*[@placeholder=\"Ex: Retail\"]",
+              "save_path": "//*[text()=\"Save\"]"
+            },
+            "jobs": {
+              "jobs_path": "//*[@id=\"global-nav\"]/div/nav/ul/li[3]",
+              "input_jobs_path": "//input[@aria-label='Search by title, skill, or company']",
+              "input_location_path": "//input[@aria-label='City, state, or zip code']",
+              "list_jobs_path": "scaffold-layout__list-container",
+              "alert_path": "//span[text()='Set alert']"
+            },
+            "messages": {
+              "messages_path": "//*[@id=\"global-nav\"]/div/nav/ul/li[4]",
+              "compose_path": "//*[@aria-label=\"Compose a new message\"]",
+              "contanct_path": "//*[@placeholder=\"Type a name or multiple names\"]",
+              "text_path": "//*[@aria-label=\"Write a message…\"]",
+              "send_path": "//button[text()=\"Send\"]"
+            }
+        }
+
+        
+    }
