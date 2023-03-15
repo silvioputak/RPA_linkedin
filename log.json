@@ -1,0 +1,13 @@
+{
+  "logs": [
+    "Trying to login in Linkedin",
+    "Getting url..",
+    "Login successful",
+    "Trying to edit profile",
+    "Profile edited successfully",
+    "Trying to edit jobs",
+    "Failed to get jobsWaiting for element to be located By(xpath, //span[text()='Set alert'])\nWait timed out after 5038ms",
+    "Compose and send message",
+    "Messaging failedWaiting for element to be located By(xpath, //*[@aria-label=\"Write a message…\"])\nWait timed out after 5209ms"
+  ]
+}
