@@ -50,7 +50,13 @@ const writeLog = (message) => {
 }
 
 function createJsonFile(name,value){
-    const fs = require('fs');
+    const fs = require('fs'); 
+    const dir = './logs';
+
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
+
     const jsonContent = JSON.stringify(value);
 
     fs.writeFile(name, jsonContent, 'utf8', function (err) {
@@ -73,7 +79,6 @@ async function login() {
     try{
         writeLog("Login in Linkedin profile")
         await driver.get(url)
-        writeLog("Getting url..")
         const usernameInput = await driver.wait(until.elementLocated(By.id(username_path)), 5000)
         await usernameInput.sendKeys(username)
 
@@ -218,9 +223,9 @@ async function main(){
     try {
         debugger;
         await login()
-        /* await profile() */
+        await profile()
         await jobs()
-       /*  await messages() */
+        await messages()
     } catch (error) {
         writeLog("Error: " + error.message)
     }finally{
